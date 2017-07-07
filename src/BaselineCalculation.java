@@ -11,7 +11,7 @@ public class BaselineCalculation {
         this.samplePeriod = (double) 1/frequency;
     }
 
-    public void performCalculation(double u){
+    protected void performCalculation(double u){
         udot = (u - oldu) / samplePeriod;
         oldu = u; // Store the old pilot's control signal
         ydotdotdot = -T2*ydotdot - T3*ydot + K*udot + K*T1*u;
@@ -20,6 +20,15 @@ public class BaselineCalculation {
         ydotdot = ydotdot + ydotdotdot * samplePeriod;
         ydot = ydot + ydotdot * samplePeriod;
         y = y + ydot * samplePeriod;
+    }
+
+    protected void reset(){
+        y = 0;
+        ydot = 0;
+        ydotdot = 0;
+        ydotdotdot = 0;
+        udot = 0;
+        oldu = 0;
     }
 
 }
