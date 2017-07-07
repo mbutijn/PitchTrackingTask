@@ -12,16 +12,19 @@ public class Simulator {
     ForcingFunction forcingFunction;
     ControlSignal controlSignal;
     BaselineCalculation baseline;
-    static final int FREQUENCY = 40;
+    AircraftSymbol aircraftSymbol;
+    Timer timer;
+    static final int SAMPLE_FREQUENCY = 40, SIMULATION_TIME = 9;
     double ft, theta;
     int count = 0;
-    double[] input;
+    double[] input, error;
     TextField textField;
+    private final int DisplayType = 0; // (0 = Compensatory, 1 = Pursuit, 2 = Preview)
 
     public static void main (String[] arg) {
         Simulator simulator = new Simulator();
         JFrame frame = new JFrame("Pitch tracking task");
-        frame.setSize(400, 500);
+        frame.setSize(380, 500);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         simulator.make(frame);
@@ -36,14 +39,16 @@ public class Simulator {
         textField.setEditable(false);
 
         controlSignal = new ControlSignal();
+        aircraftSymbol = new AircraftSymbol();
 
         frame.getContentPane().add(BorderLayout.NORTH, textField);
-        forcingFunction = new ForcingFunction(9, FREQUENCY);
+        forcingFunction = new ForcingFunction(SIMULATION_TIME, SAMPLE_FREQUENCY);
         input = forcingFunction.makefunction();
+        error = new double[input.length];
 
         baseline = new BaselineCalculation(forcingFunction.sampleFrequency);
 
-        Timer timer = new Timer(1000/FREQUENCY, run);
+        timer = new Timer(1000 / SAMPLE_FREQUENCY, run);
         timer.setRepeats(true);
         timer.start();
     }
@@ -57,10 +62,17 @@ public class Simulator {
                 baseline.performCalculation(controlSignal.getControlSignal());
                 theta = baseline.y;
 
+                error[count] = ft - theta;
                 indicators.repaint();
+                count++;
+            } else {
+                Statistics.data = error;
+                Statistics.size = error.length;
+                System.out.println("Your score is: " + Statistics.getVariance());
+                timer.stop();
             }
-            count++;
         }
+
     };
 
     class Indicators extends JPanel {
@@ -69,10 +81,20 @@ public class Simulator {
             super.paintComponent(graphics);
             Graphics2D graphics2d = (Graphics2D) graphics;
             graphics2d.setColor(Color.black);
-            graphics2d.drawLine(40, (int)(200 - 50 * ft), 350, (int)(200 - 50 * ft));
+            if (DisplayType == 0) {
+                // Draw the forcing function
+                graphics2d.drawLine(20, (int) (200 - 50 * (ft - theta)), 280, (int) (200 - 50 * (ft - theta)));
 
-            graphics2d.setColor(Color.red);
-            graphics2d.drawLine(40, (int) (200 - theta), 350, (int) (200 - theta));
+                //Draw the aircraft Symbol
+                aircraftSymbol.makeSymbol(graphics2d, 0);
+            } else if (DisplayType == 1) {
+                // Draw the forcing function
+                graphics2d.drawLine(20, (int) (200 - 50 * ft), 280, (int) (200 - 50 * ft));
+
+                //Draw the aircraft Symbol
+                aircraftSymbol.makeSymbol(graphics2d, 50 * theta);
+            }
         }
     }
+
 }

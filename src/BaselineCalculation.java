@@ -3,9 +3,9 @@
  */
 public class BaselineCalculation {
 
-    private static double Ka = 10.6189, T1 = 0.9906, T2 = 2.7565, T3 = 7.6122, Ks = 0.29, K = Ka * Ks;
-    double y, ydot, ydotdot, ydotdotdot, udot, oldu;
-    double samplePeriod;
+    private static final double Ka = 10.6189, T1 = 0.9906, T2 = 2.7565, T3 = 7.6122, Ks = 0.29, K = Ka * Ks;
+    public double y, ydot, ydotdot, ydotdotdot, udot, oldu;
+    private double samplePeriod;
 
     BaselineCalculation(int frequency) {
         this.samplePeriod = (double) 1/frequency;

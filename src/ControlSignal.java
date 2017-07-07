@@ -7,7 +7,7 @@ public class ControlSignal {
 
     public double getControlSignal() {
         PointerInfo mouseInfo = MouseInfo.getPointerInfo();
-        return mouseInfo.getLocation().getY() - 200;
+        return (mouseInfo.getLocation().getY() - 200) * 0.02;
     }
 
 }
