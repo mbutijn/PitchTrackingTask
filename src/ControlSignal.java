@@ -6,8 +6,15 @@ import java.awt.*;
 public class ControlSignal {
 
     public double getControlSignal() {
-        PointerInfo mouseInfo = MouseInfo.getPointerInfo();
-        return (mouseInfo.getLocation().getY() - 200) * 0.02;
+        double mousePositionY = MouseInfo.getPointerInfo().getLocation().getY();
+        double limit = 0.5 * Simulator.screenHeight;
+        if (mousePositionY > limit){
+            return limit * 0.02;
+        } else if (mousePositionY < -limit) {
+            return -limit * 0.02;
+        } else {
+            return (mousePositionY - limit) * 0.02;
+        }
     }
 
 }
