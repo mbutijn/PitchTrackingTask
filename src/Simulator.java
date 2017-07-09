@@ -69,10 +69,12 @@ public class Simulator {
                 error[index] = ft - theta;
                 indicators.repaint();
                 index++;
-            } else {
+            } else { // done
                 Statistics.data = error;
                 Statistics.size = error.length;
-                System.out.println("Your score is: " + Statistics.getVariance());
+                String score = String.format("%.2f", Statistics.getVariance());
+                System.out.println("Your score is: " + score);
+                textField.setText(textField.getText() + " Your score is: " + score);
                 timer.stop();
                 theta = 0;
             }
@@ -80,8 +82,8 @@ public class Simulator {
     };
 
     private void initializeSignals(){
-        input = forcingFunction.makeTargetFunction();
-        disturbance = forcingFunction.makeDisturbanceFunction();
+        input = forcingFunction.makeSignal(1, 3, 4);
+        disturbance = forcingFunction.makeSignal(5, 7, 8);
         error = new double[input.length];
     }
 
