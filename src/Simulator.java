@@ -98,6 +98,10 @@ public class Simulator {
 
     private void initializeSignals(){
         input = forcingFunction.makeSignal(1, 3, 4);
+<<<<<<< HEAD
+=======
+        disturbance = forcingFunction.makeSignal(5, 7, 8);
+>>>>>>> 051283295a9c527253c0e890ab188cfe7019aaed
         error = new double[input.length];
     }
 
