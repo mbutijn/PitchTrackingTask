@@ -48,7 +48,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Dynamics.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Dynamics.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Dynamics.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="204">
@@ -73,10 +73,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BaselineSelector.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="BaselineSelector.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/BaselineSelector.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="87">
+            <state relative-caret-position="-168">
               <caret line="19" column="29" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -850,16 +850,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/BaselineSelector.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="87">
-          <caret line="19" column="29" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Dynamics.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
@@ -869,6 +859,16 @@
             <element signature="e#153#154#0" expanded="true" />
             <element signature="e#218#219#0" expanded="true" />
             <element signature="e#267#268#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/BaselineSelector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-168">
+          <caret line="19" column="29" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
