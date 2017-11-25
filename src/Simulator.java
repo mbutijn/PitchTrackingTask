@@ -13,10 +13,11 @@ public class Simulator {
     private ControlSignal controlSignal;
     private AircraftSymbol aircraftSymbol;
     private Timer timer;
-    protected BaselineCalculation baseline;
+    protected CessnaPitch baseline2;
+    protected Vehicle baseline;
 
-    private static final int SAMPLE_FREQUENCY = 40, SIMULATION_TIME = 95;
-    private double[] input, disturbance, error;
+    private static final int SAMPLE_FREQUENCY = 100, SIMULATION_TIME = 90;
+    private double[] input, error;
     private TextField textField;
     private double ft, theta;
     public static final int screenHeight = 500;
@@ -25,11 +26,11 @@ public class Simulator {
     public static void main (String[] arg) {
         Simulator simulator = new Simulator();
         JFrame frame = new JFrame("Pitch tracking task");
-        frame.setSize(400, screenHeight);
         frame.setVisible(true);
-        frame.setResizable(false);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         simulator.make(frame, simulator);
+        frame.setSize(500, screenHeight);
+        frame.setResizable(false);
 
     }
 
@@ -41,38 +42,54 @@ public class Simulator {
         textField.setEditable(false);
         controlSignal = new ControlSignal();
         aircraftSymbol = new AircraftSymbol();
-
-        Restart restart = new Restart();
-        restart.setButton(frame, simulator);
-
-        frame.getContentPane().add(BorderLayout.NORTH, textField);
-
         forcingFunction = new ForcingFunction(SIMULATION_TIME, SAMPLE_FREQUENCY);
         initializeSignals();
-        baseline = new BaselineCalculation(forcingFunction.sampleFrequency);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(4,1));
+
+        makeUI(frame, simulator, panel);
+
+        baseline2 = new CessnaPitch(forcingFunction.sampleFrequency);
+        baseline = new Vehicle(forcingFunction.sampleFrequency);
 
         timer = new Timer(1000 / SAMPLE_FREQUENCY, actionListener);
         timer.setRepeats(true);
-        timer.start();
+
+    }
+
+    private void makeUI(JFrame frame, Simulator simulator, JPanel panel) {
+        Restart restart = new Restart();
+        restart.setButton(frame, simulator, panel);
+
+        BaselineSelector cessnaPitch = new BaselineSelector("Cessna Pitch Dynamics", true, panel);
+        BaselineSelector high = new BaselineSelector("High-Bandwith Baseline", false, panel);
+        BaselineSelector low = new BaselineSelector("Low-Bandwith Baseline", false, panel);
+
+        BaselineSelector[] buttons = new BaselineSelector[]{cessnaPitch, high, low};
+        cessnaPitch.MakeButtons(buttons, frame);
+
+        frame.getContentPane().add(BorderLayout.NORTH, textField);
     }
 
     private ActionListener actionListener = new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
             if (index < forcingFunction.numberSamples) {
                 ft = input[index];
-                double fd = disturbance[index];
                 textField.setText("time = " + String.format("%.2f", ((double) (index)/ (double) (forcingFunction.sampleFrequency))) + " [s]");
 
-                baseline.performCalculation(controlSignal.getControlSignal() + fd);
+                baseline.performCalculation(controlSignal.getControlSignal());
                 theta = baseline.y;
 
                 error[index] = ft - theta;
                 indicators.repaint();
                 index++;
-            } else {
+            } else { // done
                 Statistics.data = error;
                 Statistics.size = error.length;
-                System.out.println("Your score is: " + Statistics.getVariance());
+                String score = String.format("%.2f", Statistics.getVariance());
+                System.out.println("Your score is: " + score);
+                textField.setText(textField.getText() + " Your score is: " + score);
                 timer.stop();
                 theta = 0;
             }
@@ -80,8 +97,7 @@ public class Simulator {
     };
 
     private void initializeSignals(){
-        input = forcingFunction.makeTargetFunction();
-        disturbance = forcingFunction.makeDisturbanceFunction();
+        input = forcingFunction.makeSignal(1, 3, 4);
         error = new double[input.length];
     }
 
@@ -95,7 +111,7 @@ public class Simulator {
             super.paintComponent(graphics);
             Graphics2D graphics2d = (Graphics2D) graphics;
             graphics2d.setColor(Color.black);
-            int DisplayType = 0; // (0 = Compensatory, 1 = Pursuit, 2 = Preview)
+            int DisplayType = 1; // (0 = Compensatory, 1 = Pursuit, 2 = Preview)
             if (DisplayType == 0) {
                 // Draw the forcing function
                 graphics2d.drawLine(20, (int) (0.5*screenHeight - 50 * (ft - theta)), 280, (int) (0.5*screenHeight - 50 * (ft - theta)));

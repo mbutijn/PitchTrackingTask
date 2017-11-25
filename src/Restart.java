@@ -9,22 +9,25 @@ import java.awt.event.ActionListener;
 public class Restart {
 
     private Simulator simulator;
+    private JButton restartButton;
 
-    public void setButton(JFrame frame, Simulator simulator) {
+    protected JPanel setButton(JFrame frame, Simulator simulator, JPanel panel) {
         this.simulator = simulator;
-        JPanel panel = new JPanel();
-        JButton restartButton = new JButton("Restart");
+        restartButton = new JButton("Start");
+        restartButton.setSize(100,50);
         Restarter restarter = new Restarter();
         restartButton.addActionListener(restarter);
 
         panel.add(restartButton);
         frame.getContentPane().add(BorderLayout.EAST, panel);
+        return panel;
     }
 
-    public class Restarter implements ActionListener {
+    private class Restarter implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             simulator.index = 0;
             simulator.baseline.reset();
+            restartButton.setText("Restart");
             simulator.getTimer().start();
         }
     }

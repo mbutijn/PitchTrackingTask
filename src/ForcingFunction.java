@@ -22,31 +22,18 @@ public class ForcingFunction {
         return time;
     }
 
-    // Target target function
-    public double[] makeTargetFunction() {
-        double[] ft = new double[numberSamples];
+    // Target function
+    public double[] makeSignal(int firstRow, int secondRow, int thirdRow) {
+        double[] function = new double[numberSamples];
         double[] frequency = new double[time.length];
 
         for (int i = 0; i < 10; i++) {
             for (int k = 0; k < time.length; k++) {
-                frequency[k] = matrix[i][1] * omega_m * time[k];
-                ft[k] = ft[k] + matrix[i][3] * Math.sin(frequency[k] + matrix[i][4]);
+                frequency[k] = matrix[i][firstRow] * omega_m * time[k];
+                function[k] = function[k] + matrix[i][secondRow] * Math.sin(frequency[k] + matrix[i][thirdRow]);
             }
         }
-        return ft;
-    }
-
-    public double[] makeDisturbanceFunction() {
-        double[] fd = new double[numberSamples];
-        double[] frequency = new double[time.length];
-
-        for (int i = 0; i < 10; i++) {
-            for (int k = 0; k < time.length; k++) {
-                frequency[k] = matrix[i][5] * omega_m * time[k];
-                fd[k] = fd[k] + matrix[i][7] * Math.sin(frequency[k] + matrix[i][8]);
-            }
-        }
-        return fd;
+        return function;
     }
 
     private double getBaseFrequency(){
