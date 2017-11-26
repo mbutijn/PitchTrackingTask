@@ -8,33 +8,25 @@ import java.awt.event.ActionListener;
  */
 public class BaselineSelector {
 
-    private Simulator simulator;
     private String name;
     private boolean checked;
     private JPanel panel;
     private JRadioButton cessnaPitchSelector;
-    public ButtonGroup group = new ButtonGroup();
+    public static ButtonGroup group = new ButtonGroup();
+    public int index;
 
-    public BaselineSelector(String dynamics_name, boolean initChecked, JPanel jpanel){
+    public BaselineSelector(String dynamics_name, boolean initChecked, JPanel jpanel, int i){
         panel = jpanel;
         name = dynamics_name;
         checked = initChecked;
+        index = i;
     }
 
-    public void MakeButtons(BaselineSelector[] buttons, JFrame frame) {
-        for (BaselineSelector bs : buttons) {
-            bs.setButton(frame, simulator);
-            Selector selector = new Selector();
-            bs.cessnaPitchSelector.addActionListener(selector);
-            group.add(bs.cessnaPitchSelector);
-        }
-    }
-
-    public void setButton(JFrame frame, Simulator simulator) {
-        this.simulator = simulator;
+    public void MakeButton(BaselineSelector bs){
         cessnaPitchSelector = new JRadioButton(name, checked);
-        panel.add(cessnaPitchSelector);
-        frame.getContentPane().add(BorderLayout.EAST, panel);
+        panel.add(cessnaPitchSelector,BorderLayout.SOUTH);
+        bs.cessnaPitchSelector.addActionListener(new Selector());
+        group.add(bs.cessnaPitchSelector);
     }
 
     private class Selector implements ActionListener {
@@ -42,7 +34,10 @@ public class BaselineSelector {
         public void actionPerformed(ActionEvent e) {
             JRadioButton btn = (JRadioButton) e.getSource();
             System.out.println(btn.getText());
+            Simulator.baselineChoice = index;
+            System.out.println(Simulator.baselineChoice);
         }
+
     }
 
 }

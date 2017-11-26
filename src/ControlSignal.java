@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -5,16 +6,23 @@ import java.awt.*;
  */
 public class ControlSignal {
 
+    private JFrame frame;
+
+    public ControlSignal(JFrame f){
+        frame = f;
+    }
+
     public double getControlSignal() {
-        double mousePositionY = MouseInfo.getPointerInfo().getLocation().getY();
-        double limit = 0.5 * Simulator.screenHeight;
-        if (mousePositionY > limit){
-            return limit * 0.02;
-        } else if (mousePositionY < -limit) {
-            return -limit * 0.02;
-        } else {
-            return (mousePositionY - limit) * 0.02;
+
+        double mousePositionY = MouseInfo.getPointerInfo().getLocation().getY()-frame.getY();
+
+        if(mousePositionY < 0) {
+            mousePositionY = 0;
+        } else if (mousePositionY > Simulator.screenHeight){
+            mousePositionY = Simulator.screenHeight;
         }
+
+        return 0.02 * (mousePositionY - 0.5 * Simulator.screenHeight);
     }
 
 }

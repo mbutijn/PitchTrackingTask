@@ -13,22 +13,24 @@ public class Simulator {
     private ControlSignal controlSignal;
     private AircraftSymbol aircraftSymbol;
     private Timer timer;
-    protected CessnaPitch baseline2;
-    protected Vehicle baseline;
+    public BaselineDynamics cessnaPitch, highBandwith, lowBandwith;
 
     private static final int SAMPLE_FREQUENCY = 100, SIMULATION_TIME = 90;
     private double[] input, error;
     private TextField textField;
-    private double ft, theta;
-    public static final int screenHeight = 500;
+    private double ft;
+    public double theta;
+    protected static final int screenHeight = 700;
     protected int index = 0;
+    public static int baselineChoice = 1;
 
     public static void main (String[] arg) {
-        Simulator simulator = new Simulator();
         JFrame frame = new JFrame("Pitch tracking task");
+        Simulator simulator = new Simulator();
+        simulator.make(frame, simulator);
+
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        simulator.make(frame, simulator);
         frame.setSize(500, screenHeight);
         frame.setResizable(false);
 
@@ -40,36 +42,38 @@ public class Simulator {
 
         textField = new TextField();
         textField.setEditable(false);
-        controlSignal = new ControlSignal();
+        controlSignal = new ControlSignal(frame);
         aircraftSymbol = new AircraftSymbol();
         forcingFunction = new ForcingFunction(SIMULATION_TIME, SAMPLE_FREQUENCY);
         initializeSignals();
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(4,1));
+        Restart restart = new Restart();
+        JButton restartButton = restart.makeButton(simulator);
 
-        makeUI(frame, simulator, panel);
+        panel.add(restartButton);
 
-        baseline2 = new CessnaPitch(forcingFunction.sampleFrequency);
-        baseline = new Vehicle(forcingFunction.sampleFrequency);
+        frame.getContentPane().add(BorderLayout.NORTH, textField);
+        frame.getContentPane().add(BorderLayout.EAST, panel);
+
+        cessnaPitch = new CessnaPitch(forcingFunction.sampleFrequency);
+        highBandwith = new MatamorosPitch(forcingFunction.sampleFrequency, 3);
+        lowBandwith = new MatamorosPitch(forcingFunction.sampleFrequency, 1.5);
+
+        BaselineSelector cessnaPitch = new BaselineSelector("Cessna Pitch BaselineDynamics", true, panel,1);
+        BaselineSelector high = new BaselineSelector("High-Bandwith Baseline", false, panel,2);
+        BaselineSelector low = new BaselineSelector("Low-Bandwith Baseline", false, panel,3);
+
+        BaselineSelector[] buttons = new BaselineSelector[]{cessnaPitch, high, low};
+
+        for (BaselineSelector bs : buttons) {
+            bs.MakeButton(bs);
+        }
 
         timer = new Timer(1000 / SAMPLE_FREQUENCY, actionListener);
         timer.setRepeats(true);
 
-    }
-
-    private void makeUI(JFrame frame, Simulator simulator, JPanel panel) {
-        Restart restart = new Restart();
-        restart.setButton(frame, simulator, panel);
-
-        BaselineSelector cessnaPitch = new BaselineSelector("Cessna Pitch Dynamics", true, panel);
-        BaselineSelector high = new BaselineSelector("High-Bandwith Baseline", false, panel);
-        BaselineSelector low = new BaselineSelector("Low-Bandwith Baseline", false, panel);
-
-        BaselineSelector[] buttons = new BaselineSelector[]{cessnaPitch, high, low};
-        cessnaPitch.MakeButtons(buttons, frame);
-
-        frame.getContentPane().add(BorderLayout.NORTH, textField);
     }
 
     private ActionListener actionListener = new ActionListener() {
@@ -78,8 +82,20 @@ public class Simulator {
                 ft = input[index];
                 textField.setText("time = " + String.format("%.2f", ((double) (index)/ (double) (forcingFunction.sampleFrequency))) + " [s]");
 
-                baseline.performCalculation(controlSignal.getControlSignal());
-                theta = baseline.y;
+                textField.setText(textField.getText() + ";u = " + String.format("%.2f",controlSignal.getControlSignal()));
+                if (baselineChoice == 1) {
+                    CessnaPitch dynamics = (CessnaPitch) cessnaPitch;
+                    dynamics.performCalculation(controlSignal.getControlSignal());
+                    theta = dynamics.y;
+                } else if (baselineChoice == 2) {
+                    MatamorosPitch dynamics = (MatamorosPitch) highBandwith;
+                    dynamics.performCalculation(controlSignal.getControlSignal());
+                    theta = dynamics.y;
+                } else if (baselineChoice == 3){
+                    MatamorosPitch dynamics = (MatamorosPitch) lowBandwith;
+                    dynamics.performCalculation(controlSignal.getControlSignal());
+                    theta = dynamics.y;
+                }
 
                 error[index] = ft - theta;
                 indicators.repaint();
@@ -90,6 +106,7 @@ public class Simulator {
                 String score = String.format("%.2f", Statistics.getVariance());
                 System.out.println("Your score is: " + score);
                 textField.setText(textField.getText() + " Your score is: " + score);
+                Restart.restartButton.setText("Hold current");
                 timer.stop();
                 theta = 0;
             }

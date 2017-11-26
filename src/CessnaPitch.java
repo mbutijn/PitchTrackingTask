@@ -1,10 +1,10 @@
 /**
  * Created by martin on 6-7-2017.
  */
-public class CessnaPitch extends Dynamics{
+public class CessnaPitch extends BaselineDynamics {
 
     private static final double Ka = 10.6189, T1 = 0.9906, T2 = 2.7565, T3 = 7.6122, Ks = 0.29, K = Ka * Ks;
-    public double y, ydot, ydotdot, ydotdotdot, udot, oldu;
+    public double ydot, ydotdot, ydotdotdot, udot, oldu;
 
     CessnaPitch(int frequency) {
         samplePeriod = (double) 1/frequency;
@@ -28,6 +28,7 @@ public class CessnaPitch extends Dynamics{
         ydotdotdot = 0;
         udot = 0;
         oldu = 0;
+        System.out.println("Cessna pitch reset");
     }
 
 }
