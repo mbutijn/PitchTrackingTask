@@ -20,7 +20,7 @@ public class Simulator {
     private TextField textField;
     private double ft;
     public double theta;
-    protected static final int screenHeight = 700;
+    protected static final int screenHeight = 500;
     protected int index = 0;
     public static int baselineChoice = 0, displayChoice = 0;
 
@@ -54,8 +54,11 @@ public class Simulator {
 
         panel.add(restartButton);
 
+        JPanel panel2 = new JPanel();
+        panel2.add(panel, BorderLayout.CENTER);
+
         frame.getContentPane().add(BorderLayout.NORTH, textField);
-        frame.getContentPane().add(BorderLayout.EAST, panel);
+        frame.getContentPane().add(BorderLayout.EAST, panel2);
 
         cessnaPitch = new CessnaPitch(forcingFunction.sampleFrequency);
         highBandwith = new MatamorosPitch(forcingFunction.sampleFrequency, 3);
