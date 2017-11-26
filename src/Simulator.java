@@ -15,7 +15,7 @@ public class Simulator {
     private Timer timer;
     public BaselineDynamics cessnaPitch, highBandwith, lowBandwith;
 
-    private static final int SAMPLE_FREQUENCY = 100, SIMULATION_TIME = 90;
+    private static final int SAMPLE_FREQUENCY = 100, RUN_TIME = 90;
     private double[] input, error;
     private TextField textField;
     private double ft;
@@ -44,7 +44,7 @@ public class Simulator {
         textField.setEditable(false);
         controlSignal = new ControlSignal(frame);
         aircraftSymbol = new AircraftSymbol();
-        forcingFunction = new ForcingFunction(SIMULATION_TIME, SAMPLE_FREQUENCY);
+        forcingFunction = new ForcingFunction(RUN_TIME, SAMPLE_FREQUENCY);
         initializeSignals();
 
         JPanel panel = new JPanel();

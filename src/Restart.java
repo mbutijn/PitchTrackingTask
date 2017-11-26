@@ -27,7 +27,7 @@ public class Restart {
             simulator.highBandwith.reset();
             simulator.lowBandwith.reset();
 
-            if (restartButton.getText().equals("Start") || restartButton.getText().equals("Restart")) {
+            if (restartButton.getText().equals("Start") || restartButton.getText().equals("Restart") || restartButton.getText().equals("Hold current")) {
                 restartButton.setText("Stop");
                 simulator.getTimer().start();
             } else if (restartButton.getText().equals("Stop")){
