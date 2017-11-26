@@ -64,9 +64,9 @@ public class Simulator {
         highBandwith = new MatamorosPitch(forcingFunction.sampleFrequency, 3);
         lowBandwith = new MatamorosPitch(forcingFunction.sampleFrequency, 1.5);
 
-        BaselineSelector cessnaPitch = new BaselineSelector("Cessna Pitch BaselineDynamics", true, panel, 0);
-        BaselineSelector high = new BaselineSelector("High-Bandwith Baseline", false, panel, 1);
-        BaselineSelector low = new BaselineSelector("Low-Bandwith Baseline", false, panel, 2);
+        BaselineSelector cessnaPitch = new BaselineSelector("Cessna Aircraft II", true, panel, 0);
+        BaselineSelector high = new BaselineSelector("High-Bandwith", false, panel, 1);
+        BaselineSelector low = new BaselineSelector("Low-Bandwith", false, panel, 2);
         BaselineSelector[] baselineSelectors = new BaselineSelector[]{cessnaPitch, high, low};
 
         for (BaselineSelector bs : baselineSelectors) {
