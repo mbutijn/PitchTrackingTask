@@ -4,29 +4,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created by martin on 25-11-2017.
+ * Created by martin on 26-11-2017.
  */
-public class BaselineSelector {
+public class DisplayTypeSelector {
 
+    private JRadioButton radioButton;
     private String name;
     private boolean checked;
     private JPanel panel;
-    private JRadioButton radioButton;
-    public static ButtonGroup buttonGroup = new ButtonGroup();
+    public static ButtonGroup displayGroup = new ButtonGroup();
     public int index;
 
-    public BaselineSelector(String dynamics_name, boolean initChecked, JPanel jpanel, int i){
+    public DisplayTypeSelector(String dynamics_name, boolean initChecked, JPanel jpanel, int i){
         panel = jpanel;
         name = dynamics_name;
         checked = initChecked;
         index = i;
     }
 
-    public void MakeButton(BaselineSelector bs){
+    public void MakeButton(DisplayTypeSelector displayTypeSelector){
         radioButton = new JRadioButton(name, checked);
-        panel.add(radioButton,BorderLayout.CENTER);
-        bs.radioButton.addActionListener(new Selector());
-        buttonGroup.add(bs.radioButton);
+        panel.add(radioButton, BorderLayout.SOUTH);
+        displayTypeSelector.radioButton.addActionListener(new Selector());
+        displayGroup.add(displayTypeSelector.radioButton);
     }
 
     private class Selector implements ActionListener {
@@ -34,9 +34,8 @@ public class BaselineSelector {
         public void actionPerformed(ActionEvent e) {
             JRadioButton btn = (JRadioButton) e.getSource();
             System.out.println(btn.getText());
-            Simulator.baselineChoice = index;
+            Simulator.displayChoice = index; // (0 = Compensatory, 1 = Pursuit, 2 = Preview)
         }
-
     }
 
 }

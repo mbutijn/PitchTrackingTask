@@ -22,7 +22,7 @@ public class Simulator {
     public double theta;
     protected static final int screenHeight = 700;
     protected int index = 0;
-    public static int baselineChoice = 1;
+    public static int baselineChoice = 0, displayChoice = 0;
 
     public static void main (String[] arg) {
         JFrame frame = new JFrame("Pitch tracking task");
@@ -48,7 +48,7 @@ public class Simulator {
         initializeSignals();
 
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(4,1));
+        panel.setLayout(new GridLayout(6,1));
         Restart restart = new Restart();
         JButton restartButton = restart.makeButton(simulator);
 
@@ -61,14 +61,21 @@ public class Simulator {
         highBandwith = new MatamorosPitch(forcingFunction.sampleFrequency, 3);
         lowBandwith = new MatamorosPitch(forcingFunction.sampleFrequency, 1.5);
 
-        BaselineSelector cessnaPitch = new BaselineSelector("Cessna Pitch BaselineDynamics", true, panel,1);
-        BaselineSelector high = new BaselineSelector("High-Bandwith Baseline", false, panel,2);
-        BaselineSelector low = new BaselineSelector("Low-Bandwith Baseline", false, panel,3);
+        BaselineSelector cessnaPitch = new BaselineSelector("Cessna Pitch BaselineDynamics", true, panel, 0);
+        BaselineSelector high = new BaselineSelector("High-Bandwith Baseline", false, panel, 1);
+        BaselineSelector low = new BaselineSelector("Low-Bandwith Baseline", false, panel, 2);
+        BaselineSelector[] baselineSelectors = new BaselineSelector[]{cessnaPitch, high, low};
 
-        BaselineSelector[] buttons = new BaselineSelector[]{cessnaPitch, high, low};
-
-        for (BaselineSelector bs : buttons) {
+        for (BaselineSelector bs : baselineSelectors) {
             bs.MakeButton(bs);
+        }
+
+        DisplayTypeSelector compensatory = new DisplayTypeSelector("Compensatory", true, panel, 0);
+        DisplayTypeSelector pursuit = new DisplayTypeSelector("Pursuit", false, panel, 1);
+        DisplayTypeSelector[] displaySelectors = new DisplayTypeSelector[]{compensatory, pursuit};
+
+        for (DisplayTypeSelector ds : displaySelectors){
+            ds.MakeButton(ds);
         }
 
         timer = new Timer(1000 / SAMPLE_FREQUENCY, actionListener);
@@ -83,15 +90,15 @@ public class Simulator {
                 textField.setText("time = " + String.format("%.2f", ((double) (index)/ (double) (forcingFunction.sampleFrequency))) + " [s]");
 
                 textField.setText(textField.getText() + ";u = " + String.format("%.2f",controlSignal.getControlSignal()));
-                if (baselineChoice == 1) {
+                if (baselineChoice == 0) {
                     CessnaPitch dynamics = (CessnaPitch) cessnaPitch;
                     dynamics.performCalculation(controlSignal.getControlSignal());
                     theta = dynamics.y;
-                } else if (baselineChoice == 2) {
+                } else if (baselineChoice == 1) {
                     MatamorosPitch dynamics = (MatamorosPitch) highBandwith;
                     dynamics.performCalculation(controlSignal.getControlSignal());
                     theta = dynamics.y;
-                } else if (baselineChoice == 3){
+                } else if (baselineChoice == 2){
                     MatamorosPitch dynamics = (MatamorosPitch) lowBandwith;
                     dynamics.performCalculation(controlSignal.getControlSignal());
                     theta = dynamics.y;
@@ -128,14 +135,14 @@ public class Simulator {
             super.paintComponent(graphics);
             Graphics2D graphics2d = (Graphics2D) graphics;
             graphics2d.setColor(Color.black);
-            int DisplayType = 1; // (0 = Compensatory, 1 = Pursuit, 2 = Preview)
-            if (DisplayType == 0) {
+
+            if (displayChoice == 0) {
                 // Draw the forcing function
                 graphics2d.drawLine(20, (int) (0.5*screenHeight - 50 * (ft - theta)), 280, (int) (0.5*screenHeight - 50 * (ft - theta)));
 
                 //Draw the aircraft Symbol
                 aircraftSymbol.makeSymbol(graphics2d, 0);
-            } else if (DisplayType == 1) {
+            } else if (displayChoice == 1) {
                 // Draw the forcing function
                 graphics2d.drawLine(20, (int) (0.5*screenHeight - 50 * ft), 280, (int) (0.5*screenHeight - 50 * ft));
 
